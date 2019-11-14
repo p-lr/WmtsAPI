@@ -1,0 +1,13 @@
+*.iml
+.idea/**
+*.class
+*.lock
+*.bin
+*.values
+*.values.s
+*.jar
+.gradle/**
+build/**
+out/**
+logback/**
+gradle.properties
