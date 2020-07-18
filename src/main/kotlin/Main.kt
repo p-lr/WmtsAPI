@@ -11,6 +11,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.request.uri
 import io.ktor.response.respond
 import io.ktor.response.respondFile
+import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
@@ -28,10 +29,11 @@ class AppArgs : CliktCommand() {
     private val port: Int by option("-p", help = "Port").int().default(8080)
     private val pathOfTiles: String by option("--pathOfTiles", help = "The path where tiles are stored").required()
     private val ext: String by option("--ext", help = "The extension of image files (like '.jpeg')").required()
+    private val ignApi: String by option("--ignApi", help = "The IGN api key").required()
 
     override fun run() {
         val server = embeddedServer(Netty, port = port) {
-            WmtsApiApplication(pathOfTiles, ext).apply {
+            WmtsApiApplication(pathOfTiles, ext, ignApi).apply {
                 main()
             }
         }
@@ -39,7 +41,7 @@ class AppArgs : CliktCommand() {
     }
 }
 
-class WmtsApiApplication(private val pathOfTiles: String, private val ext: String) {
+class WmtsApiApplication(private val pathOfTiles: String, private val ext: String, private val ignApi: String) {
     private val logger by logger()
 
     fun Application.main() {
@@ -68,6 +70,9 @@ class WmtsApiApplication(private val pathOfTiles: String, private val ext: Strin
                     logger.info(e.stackTraceAsString())
                     call.respond(HttpStatusCode.NotFound)
                 }
+            }
+            get("ign-api") {
+                call.respondText(ignApi)
             }
         }
     }
