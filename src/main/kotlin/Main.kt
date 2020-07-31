@@ -30,10 +30,14 @@ class AppArgs : CliktCommand() {
     private val pathOfTiles: String by option("--pathOfTiles", help = "The path where tiles are stored").required()
     private val ext: String by option("--ext", help = "The extension of image files (like '.jpeg')").required()
     private val ignApi: String by option("--ignApi", help = "The IGN api key").required()
+    private val ordnanceSurveyApi: String by option(
+        "--ordnanceSurveyApi",
+        help = "The Ordnance Survey api key"
+    ).required()
 
     override fun run() {
         val server = embeddedServer(Netty, port = port) {
-            WmtsApiApplication(pathOfTiles, ext, ignApi).apply {
+            WmtsApiApplication(pathOfTiles, ext, ignApi, ordnanceSurveyApi).apply {
                 main()
             }
         }
@@ -41,7 +45,10 @@ class AppArgs : CliktCommand() {
     }
 }
 
-class WmtsApiApplication(private val pathOfTiles: String, private val ext: String, private val ignApi: String) {
+class WmtsApiApplication(
+    private val pathOfTiles: String, private val ext: String, private val ignApi: String,
+    private val ordnanceSurveyApi: String
+) {
     private val logger by logger()
 
     fun Application.main() {
@@ -73,6 +80,9 @@ class WmtsApiApplication(private val pathOfTiles: String, private val ext: Strin
             }
             get("ign-api") {
                 call.respondText(ignApi)
+            }
+            get("ordnance-survey-api") {
+                call.respondText(ordnanceSurveyApi)
             }
         }
     }
