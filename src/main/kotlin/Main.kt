@@ -8,12 +8,12 @@ import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.*
 import io.ktor.request.uri
 import io.ktor.response.respond
 import io.ktor.response.respondFile
 import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.routing.*
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import org.slf4j.event.Level
@@ -83,6 +83,11 @@ class WmtsApiApplication(
             }
             get("ordnance-survey-api") {
                 call.respondText(ordnanceSurveyApi)
+            }
+
+            static("trekme-privacy-policy") {
+                resources("trekme-privacy-policy")
+                defaultResource("index.html", "trekme-privacy-policy")
             }
         }
     }
