@@ -3,29 +3,28 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.int
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.application.install
-import io.ktor.features.CallLogging
-import io.ktor.http.HttpStatusCode
+import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.http.*
 import io.ktor.http.content.*
-import io.ktor.request.uri
-import io.ktor.response.respond
-import io.ktor.response.respondFile
-import io.ktor.response.respondText
+import io.ktor.request.*
+import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import org.slf4j.event.Level
+import org.springframework.boot.SpringApplication
+import spring.SpringApp
 import util.logger
 import util.stackTraceAsString
 import java.io.File
 
 fun main(args: Array<String>) {
-    AppArgs().main(args)
+    SpringApplication.run(SpringApp::class.java, *args)
+    KtorApp().main(args)
 }
 
-class AppArgs : CliktCommand() {
+class KtorApp : CliktCommand() {
     private val port: Int by option("-p", help = "Port").int().default(8080)
     private val pathOfTiles: String by option("--pathOfTiles", help = "The path where tiles are stored").required()
     private val ext: String by option("--ext", help = "The extension of image files (like '.jpeg')").required()

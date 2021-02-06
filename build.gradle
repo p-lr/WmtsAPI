@@ -1,9 +1,10 @@
 group 'com.peterlaurence.wmtsapi'
-version '1.2.1'
+version '1.2.2'
 
 buildscript {
     ext.kotlin_version = '1.4.30'
     ext.ktor_version = '1.5.1'
+    ext.spring_boot_version = '2.4.2'
 
     repositories {
         mavenCentral()
@@ -13,6 +14,9 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
         classpath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
     }
 }
@@ -21,6 +25,9 @@ apply plugin: 'java'
 apply plugin: 'application'
 mainClassName = 'MainKt'
 apply plugin: 'kotlin'
+apply plugin: "kotlin-spring"
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 apply plugin: "com.github.johnrengelman.shadow"
 
 sourceCompatibility = 1.8
@@ -35,7 +42,14 @@ repositories {
     jcenter()
 }
 
+configurations {
+    compile.exclude module: "spring-boot-starter-tomcat"
+}
+
 dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-jetty"
+    testCompile('org.springframework.boot:spring-boot-starter-test')
     implementation "io.ktor:ktor-server-netty:$ktor_version"
     implementation "ch.qos.logback:logback-classic:1.2.3"
     implementation("com.github.ajalt:clikt:2.3.0")
