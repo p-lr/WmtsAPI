@@ -1,9 +1,9 @@
 group 'com.peterlaurence.wmtsapi'
-version '1.2.0'
+version '1.2.1'
 
 buildscript {
-    ext.kotlin_version = '1.4.10'
-    ext.ktor_version = '1.4.1'
+    ext.kotlin_version = '1.4.30'
+    ext.ktor_version = '1.5.1'
 
     repositories {
         mavenCentral()
@@ -13,7 +13,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.github.jengelman.gradle.plugins:shadow:6.0.0"
+        classpath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
     }
 }
 
