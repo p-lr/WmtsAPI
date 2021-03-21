@@ -2,7 +2,7 @@ group 'com.peterlaurence.wmtsapi'
 version '1.2.1'
 
 buildscript {
-    ext.kotlin_version = '1.4.30'
+    ext.kotlin_version = '1.4.31'
     ext.ktor_version = '1.5.1'
 
     repositories {
