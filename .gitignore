@@ -11,3 +11,4 @@ build/**
 out/**
 logback/**
 gradle.properties
+local.properties

@@ -27,8 +27,6 @@ fun main(args: Array<String>) {
 
 class AppArgs : CliktCommand() {
     private val port: Int by option("-p", help = "Port").int().default(8080)
-    private val pathOfMapViewTiles: String by option("--pathOfMapViewTiles", help = "The path where MapView tiles are stored").required()
-    private val pathOfMapComposeTiles: String by option("--pathOfMapComposeTiles", help = "The path where MapCompose tiles are stored").required()
     private val ext: String by option("--ext", help = "The extension of image files (like '.jpeg')").required()
     private val ignApi: String by option("--ignApi", help = "The IGN api key").required()
     private val ordnanceSurveyApi: String by option(
@@ -38,7 +36,7 @@ class AppArgs : CliktCommand() {
 
     override fun run() {
         val server = embeddedServer(Netty, port = port) {
-            WmtsApiApplication(pathOfMapViewTiles, pathOfMapComposeTiles, ext, ignApi, ordnanceSurveyApi).apply {
+            WmtsApiApplication(ext, ignApi, ordnanceSurveyApi).apply {
                 main()
             }
         }
@@ -47,8 +45,6 @@ class AppArgs : CliktCommand() {
 }
 
 class WmtsApiApplication(
-    private val pathOfMapViewTiles: String,
-    private val pathOfMapComposeTiles: String,
     private val ext: String,
     private val ignApi: String,
     private val ordnanceSurveyApi: String
@@ -61,48 +57,6 @@ class WmtsApiApplication(
         }
 
         routing {
-            get("mapview-tile/{level}/{row}/{col}") {
-                val levelStr = call.parameters["level"]
-                val rowStr = call.parameters["row"]
-                val colStr = call.parameters["col"]
-
-                try {
-                    if (levelStr != null && rowStr != null && colStr != null) {
-                        val level = levelStr.toInt()
-                        val row = rowStr.toInt()
-                        val col = colStr.substringBefore(ext).toInt()
-
-                        val imageFile = getFileFromCoords(pathOfMapViewTiles, level, row, col)
-                        call.respondFile(imageFile)
-                    } else {
-                        throw Exception("Malformed url : ${call.request.uri}")
-                    }
-                } catch (e: Exception) {
-                    logger.info(e.stackTraceAsString())
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
-            get("mapcompose-tile/{level}/{row}/{col}") {
-                val levelStr = call.parameters["level"]
-                val rowStr = call.parameters["row"]
-                val colStr = call.parameters["col"]
-
-                try {
-                    if (levelStr != null && rowStr != null && colStr != null) {
-                        val level = levelStr.toInt()
-                        val row = rowStr.toInt()
-                        val col = colStr.substringBefore(ext).toInt()
-
-                        val imageFile = getFileFromCoords(pathOfMapComposeTiles, level, row, col)
-                        call.respondFile(imageFile)
-                    } else {
-                        throw Exception("Malformed url : ${call.request.uri}")
-                    }
-                } catch (e: Exception) {
-                    logger.info(e.stackTraceAsString())
-                    call.respond(HttpStatusCode.NotFound)
-                }
-            }
             get("ign-api") {
                 call.respondText(ignApi)
             }
@@ -115,10 +69,6 @@ class WmtsApiApplication(
                 defaultResource("index.html", "trekme-privacy-policy")
             }
         }
-    }
-
-    private fun getFileFromCoords(path: String, level: Int, row: Int, col: Int): File {
-        return File(path, "$level${File.separator}$row${File.separator}$col$ext")
     }
 }
 
